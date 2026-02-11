@@ -13,7 +13,7 @@ This solution follows your architecture style with separated layers and scalable
 - Clean Architecture and layered separation.
 - Factory pattern via `BrokerProviderFactory`.
 - Strategy-like broker adapters (`UpstoxBrokerClient`, `ZerodhaBrokerClient`).
-- Mapper resolver pattern via `HoldingMapperResolver` and broker-specific `IHoldingMapper<T>` implementations.
+- Mapper resolver pattern via Infrastructure `HoldingMapperResolver` and broker-specific `IHoldingMapper<T>` implementations (external DTO mapping kept outside Application).
 - External HTTP resolver/executor pattern via `ExternalApiConfigResolver` and `ExternalApiExecutor`.
 
 ## Holdings flow

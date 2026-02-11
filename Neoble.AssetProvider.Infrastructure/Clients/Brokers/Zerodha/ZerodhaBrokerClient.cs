@@ -1,6 +1,5 @@
 using Neoble.AssetProvider.Application.Interfaces.Providers;
-using Neoble.AssetProvider.Application.Services.DTOs;
-using Neoble.AssetProvider.Application.Services.Mappers.Holdings;
+using Neoble.AssetProvider.Infrastructure.Mappers.Holdings;
 using Neoble.AssetProvider.Domain.Entities;
 using Neoble.AssetProvider.Domain.Enums;
 using Neoble.AssetProvider.Infrastructure.Http.Abstractions;
