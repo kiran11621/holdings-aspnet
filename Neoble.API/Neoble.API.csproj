@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Neoble.AssetProvider.Application/Neoble.AssetProvider.Application.csproj" />
+    <ProjectReference Include="../Neoble.AssetProvider.Infrastructure/Neoble.AssetProvider.Infrastructure.csproj" />
+    <ProjectReference Include="../Neoble.AssetProvider.Persistence/Neoble.AssetProvider.Persistence.csproj" />
+  </ItemGroup>
+</Project>
