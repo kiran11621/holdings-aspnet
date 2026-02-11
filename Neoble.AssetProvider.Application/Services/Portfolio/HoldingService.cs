@@ -1,23 +1,26 @@
-using Neoble.AssetProvider.Application.DTOs;
-using Neoble.AssetProvider.Application.Interfaces.Clients.Brokers;
+using Neoble.AssetProvider.Application.Interfaces.Providers;
+using Neoble.AssetProvider.Domain.Entities;
 using Neoble.AssetProvider.Domain.Enums;
 
 namespace Neoble.AssetProvider.Application.Services.Portfolio;
 
 public class HoldingService
 {
-    private readonly IBrokerClientFactory _brokerClientFactory;
+    private readonly IBrokerProviderFactory _brokerProviderFactory;
 
-    public HoldingService(IBrokerClientFactory brokerClientFactory)
+    public HoldingService(IBrokerProviderFactory brokerProviderFactory)
     {
-        _brokerClientFactory = brokerClientFactory;
+        _brokerProviderFactory = brokerProviderFactory;
     }
 
-    public Task<IReadOnlyCollection<HoldingDto>> GetHoldingsAsync(
-        BrokerType brokerType,
+    public Task<List<Holding>> GetHoldingsAsync(
+        Broker broker,
+        long userId,
+        string dpId,
+        string clientId,
         CancellationToken cancellationToken = default)
     {
-        var client = _brokerClientFactory.Resolve(brokerType);
-        return client.GetHoldingsAsync(cancellationToken);
+        var provider = _brokerProviderFactory.Resolve(broker);
+        return provider.GetHoldingsAsync(userId, dpId, clientId, cancellationToken);
     }
 }

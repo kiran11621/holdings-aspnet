@@ -1,34 +1,34 @@
-using Neoble.AssetProvider.Application.DTOs;
-using Neoble.AssetProvider.Application.Interfaces.Clients.Brokers;
+using Neoble.AssetProvider.Application.Interfaces.Providers;
+using Neoble.AssetProvider.Application.Services.DTOs;
+using Neoble.AssetProvider.Application.Services.Mappers.Holdings;
+using Neoble.AssetProvider.Domain.Entities;
 using Neoble.AssetProvider.Domain.Enums;
 using Neoble.AssetProvider.Infrastructure.Http.Abstractions;
 
 namespace Neoble.AssetProvider.Infrastructure.Clients.Brokers.Upstox;
 
-public class UpstoxBrokerClient : IBrokerHoldingClient
+public class UpstoxBrokerClient : IBrokerProvider
 {
     private readonly IExternalApiExecutor _externalApiExecutor;
+    private readonly HoldingMapperResolver _holdingMapperResolver;
 
-    public UpstoxBrokerClient(IExternalApiExecutor externalApiExecutor)
+    public UpstoxBrokerClient(IExternalApiExecutor externalApiExecutor, HoldingMapperResolver holdingMapperResolver)
     {
         _externalApiExecutor = externalApiExecutor;
+        _holdingMapperResolver = holdingMapperResolver;
     }
 
-    public BrokerType BrokerType => BrokerType.Upstox;
+    public Broker Broker => Broker.Upstox;
 
-    public async Task<IReadOnlyCollection<HoldingDto>> GetHoldingsAsync(CancellationToken cancellationToken = default)
+    public async Task<List<Holding>> GetHoldingsAsync(long userId, string dpId, string clientId, CancellationToken cancellationToken = default)
     {
-        var response = await _externalApiExecutor.GetAsync<UpstoxHoldingResponse>("Upstox", "Holding", cancellationToken);
+        var response = await _externalApiExecutor.PostAsync<object, UpstoxHoldingResponseDto>(
+            "Upstox",
+            "Holding",
+            new { },
+            false,
+            cancellationToken);
 
-        return response?.Data.Select(x => new HoldingDto
-        {
-            Broker = BrokerType,
-            Isin = x.Isin,
-            TradingSymbol = x.TradingSymbol,
-            Exchange = x.Exchange,
-            Quantity = x.Quantity,
-            LastPrice = x.LastPrice,
-            Pnl = x.Pnl
-        }).ToList() ?? [];
+        return _holdingMapperResolver.Map(response, Broker, userId, dpId, clientId);
     }
 }

@@ -1,24 +1,31 @@
-# NeobleSolution (Dummy Clean Architecture Setup)
+# NeobleSolution (Clean Architecture Dummy Project)
 
-This repository now contains a scalable multi-project setup:
+This solution follows your architecture style with separated layers and scalable broker integrations.
 
-- `Neoble.API` - controllers, contracts, startup configuration.
-- `Neoble.AssetProvider.Application` - use-case orchestration, DTOs, interfaces.
-- `Neoble.AssetProvider.Domain` - entities, enums, value objects.
-- `Neoble.AssetProvider.Infrastructure` - external API adapters and factory implementations.
-- `Neoble.AssetProvider.Persistence` - placeholder persistence project for SQL/Mongo repositories.
+## Projects
+- `Neoble.API`
+- `Neoble.AssetProvider.Application`
+- `Neoble.AssetProvider.Domain`
+- `Neoble.AssetProvider.Infrastructure`
+- `Neoble.AssetProvider.Persistence`
 
-## Implemented flow
+## Implemented patterns
+- Clean Architecture and layered separation.
+- Factory pattern via `BrokerProviderFactory`.
+- Strategy-like broker adapters (`UpstoxBrokerClient`, `ZerodhaBrokerClient`).
+- Mapper resolver pattern via `HoldingMapperResolver` and broker-specific `IHoldingMapper<T>` implementations.
+- External HTTP resolver/executor pattern via `ExternalApiConfigResolver` and `ExternalApiExecutor`.
 
-1. `BrokerController` receives broker type in route.
-2. `HoldingService` orchestrates use case.
-3. `BrokerClientFactory` resolves strategy (`Upstox` / `Zerodha`).
-4. Broker client calls the configured external endpoint through `ExternalApiExecutor`.
-5. Data is mapped to application DTO and returned as API contract.
+## Holdings flow
+1. API receives broker + request context (`userId`, `dpId`, `clientId`).
+2. `HoldingService` resolves broker provider through factory.
+3. Provider calls `IExternalApiExecutor.PostAsync(...)`.
+4. Provider maps response through `HoldingMapperResolver`.
+5. API returns normalized holding response.
 
 ## Endpoints
+- `GET /api/Broker/Upstox/holding?userId=1&dpId=dp1&clientId=client1`
+- `GET /api/Broker/Zerodha/holding?userId=1&dpId=dp1&clientId=client1`
 
-- `GET /api/Broker/Upstox/holding`
-- `GET /api/Broker/Zerodha/holding`
-
-Configured remote APIs are Postman mock URLs inside `Neoble.API/appsettings.json`.
+## Configuration
+External API URLs are resolved from `Neoble.API/appsettings.json` under `AssetProvider` section.

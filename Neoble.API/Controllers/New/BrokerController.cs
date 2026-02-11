@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Neoble.API.Contracts.Requests;
 using Neoble.API.Contracts.Responses;
 using Neoble.AssetProvider.Application.Services.Portfolio;
 using Neoble.AssetProvider.Domain.Enums;
@@ -16,22 +17,33 @@ public class BrokerController : ControllerBase
         _holdingService = holdingService;
     }
 
-    [HttpGet("{brokerType}/holding")]
+    [HttpGet("{broker}/holding")]
     public async Task<ActionResult<IReadOnlyCollection<HoldingResponse>>> GetHoldings(
-        BrokerType brokerType,
+        Broker broker,
+        [FromQuery] HoldingRequest request,
         CancellationToken cancellationToken)
     {
-        var holdings = await _holdingService.GetHoldingsAsync(brokerType, cancellationToken);
+        var holdings = await _holdingService.GetHoldingsAsync(
+            broker,
+            request.UserId,
+            request.DpId,
+            request.ClientId,
+            cancellationToken);
+
         var result = holdings.Select(x => new HoldingResponse
         {
             UserId = x.UserId,
             Broker = x.Broker.ToString(),
             Isin = x.Isin,
             TradingSymbol = x.TradingSymbol,
+            InstrumentToken = x.InstrumentToken,
             Exchange = x.Exchange,
+            CompanyName = x.CompanyName,
             Quantity = x.Quantity,
             LastPrice = x.LastPrice,
-            Pnl = x.Pnl
+            MarketValue = x.MarketValue,
+            ProfitandLoss = x.ProfitandLoss,
+            Product = x.Product
         }).ToList();
 
         return Ok(result);

@@ -2,8 +2,10 @@ namespace Neoble.AssetProvider.Infrastructure.Http.Abstractions;
 
 public interface IExternalApiExecutor
 {
-    Task<TResponse?> GetAsync<TResponse>(
+    Task<TResponse> PostAsync<TRequest, TResponse>(
         string providerName,
         string endpointKey,
-        CancellationToken cancellationToken = default);
+        TRequest request,
+        bool encrypt = false,
+        CancellationToken ct = default);
 }

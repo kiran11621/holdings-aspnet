@@ -8,4 +8,7 @@
     <ProjectReference Include="../Neoble.AssetProvider.Application/Neoble.AssetProvider.Application.csproj" />
     <ProjectReference Include="../Neoble.AssetProvider.Domain/Neoble.AssetProvider.Domain.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
 </Project>
